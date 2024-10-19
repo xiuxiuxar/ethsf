@@ -1,5 +1,8 @@
 {
-    "dev": {},
+    "dev": {
+        "skill/xiuxiuxar/chit_chat/0.1.0": "bafybeieox6h3mpsqhx2mt2p4nen6m34ahefh2n2atkxgvligjgkngbsrke",
+        "agent/xiuxiuxar/chit_chat/0.1.0": "bafybeid5hd3dq6hnswubpku44ogwworvahvajtkdc7lspcf3ogyvwy7kyi"
+    },
     "third_party": {
         "protocol/eightballer/http/0.1.0": "bafybeieoom2ajzvurwsjbivx23dwilarfzkihgqpgqp43ypowpr5xdyjr4",
         "protocol/eightballer/websockets/0.1.0": "bafybeihoiyzxc3ikhgty54snlu7djyn34dcqcuqppnf5zajuabc4ecgxwm",

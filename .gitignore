@@ -14,6 +14,7 @@ keys.json
 
 agent/
 service/
+chit_chat/
 
 packages/eightballer
 packages/open_aea

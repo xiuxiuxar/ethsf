@@ -19,20 +19,19 @@
 
 """This package contains a scaffold of a behaviour."""
 
-from aea.skills.base import Behaviour
+from aea.skills.behaviours import Behaviour, TickerBehaviour
 
 
-class MyScaffoldBehaviour(Behaviour):
+class MyScaffoldBehaviour(TickerBehaviour):
     """This class scaffolds a behaviour."""
 
     def setup(self) -> None:
         """Implement the setup."""
-        raise NotImplementedError
+        self.context.logger.info(f"Setup {self.__class__.__name__}")
 
     def act(self) -> None:
         """Implement the act."""
-        raise NotImplementedError
+        self.context.logger.info(f"Enacting {self.__class__.__name__}")
 
     def teardown(self) -> None:
         """Implement the task teardown."""
-        raise NotImplementedError

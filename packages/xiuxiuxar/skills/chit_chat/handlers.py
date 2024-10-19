@@ -24,16 +24,15 @@ from typing import Optional
 from aea.configurations.base import PublicId
 from aea.protocols.base import Message
 from aea.skills.base import Handler
-
+from packages.eightballer.protocols.http import HttpMessage
 
 class MyScaffoldHandler(Handler):
     """This class scaffolds a handler."""
 
-    SUPPORTED_PROTOCOL = None  # type: Optional[PublicId]
+    SUPPORTED_PROTOCOL = HttpMessage.protocol_id
 
     def setup(self) -> None:
         """Implement the setup."""
-        raise NotImplementedError
 
     def handle(self, message: Message) -> None:
         """
@@ -45,4 +44,3 @@ class MyScaffoldHandler(Handler):
 
     def teardown(self) -> None:
         """Implement the handler teardown."""
-        raise NotImplementedError
