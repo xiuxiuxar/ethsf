@@ -13,7 +13,7 @@ protocols:
 - eightballer/http:0.1.0:bafybeieoom2ajzvurwsjbivx23dwilarfzkihgqpgqp43ypowpr5xdyjr4
 - open_aea/signing:1.0.0:bafybeihv62fim3wl2bayavfcg3u5e5cxu3b7brtu4cn5xoxd6lqwachasi
 skills:
-- xiuxiuxar/chit_chat:0.1.0:bafybeiboiivn2bdlecloj2vuworwwtceccbd5iq6kzwchp7k62va4z3c5i
+- xiuxiuxar/chit_chat:0.1.0:bafybeidsernlbwpb25ianctqjszccosnyzqsdqorczdcydg4yi2qscb4bm
 customs: []
 default_ledger: ethereum
 required_ledgers:
@@ -22,7 +22,26 @@ default_routing: {}
 connection_private_key_paths: {}
 private_key_paths: {}
 logging_config:
-  disable_existing_loggers: false
+  disable_existing_loggers: true
+  formatters:
+    standard:
+      format: '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+  handlers:
+    console:
+      class: rich.logging.RichHandler
+      level: INFO
+    logfile:
+      class: logging.FileHandler
+      filename: log.txt
+      formatter: standard
+      level: INFO
+  loggers:
+    aea:
+      handlers:
+      - console
+      - logfile
+      level: INFO
+      propagate: false
   version: 1
 dependencies:
   open-aea-ledger-ethereum: {}

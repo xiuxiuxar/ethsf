@@ -22,7 +22,7 @@ skills: []
 behaviours:
   scaffold:
     args:
-      tick_interval: 10
+      tick_interval: 5
     class_name: ChitChatBehaviour
 handlers:
   scaffold:
