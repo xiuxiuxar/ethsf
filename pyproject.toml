@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "education_station"
+name = "chat_station"
 version = "0.1.0"
 description = ""
 authors = ["xiuxiuxar"]
