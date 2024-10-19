@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # ------------------------------------------------------------------------------
 #
-#   Copyright 2024 xiuxiuxar
+#   Copyright 2024 zarathustra
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -17,30 +17,15 @@
 #
 # ------------------------------------------------------------------------------
 
-"""This package contains a scaffold of a handler."""
+"""This package contains the data models for the chit_chat skill."""
 
-from typing import Optional
+from pydantic import BaseModel
 
-from aea.configurations.base import PublicId
-from aea.protocols.base import Message
-from aea.skills.base import Handler
-from packages.eightballer.protocols.http import HttpMessage
 
-class MyScaffoldHandler(Handler):
-    """This class scaffolds a handler."""
+class Message(BaseModel):
+    role: str
+    content: str
 
-    SUPPORTED_PROTOCOL = HttpMessage.protocol_id
 
-    def setup(self) -> None:
-        """Implement the setup."""
-
-    def handle(self, message: Message) -> None:
-        """
-        Implement the reaction to an envelope.
-
-        :param message: the message
-        """
-        raise NotImplementedError
-
-    def teardown(self) -> None:
-        """Implement the handler teardown."""
+class Messages(BaseModel):
+    messages: list[Message]

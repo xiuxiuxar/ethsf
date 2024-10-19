@@ -6,12 +6,14 @@ description: ''
 aea_version: '>=1.57.0, <2.0.0'
 fingerprint: {}
 fingerprint_ignore_patterns: []
-connections: []
+connections:
+- eightballer/http_client:0.1.0:bafybeidxqvcgobltkb5rgokakcfo25ntfhlffmpzqap6oid4ttmwbvn4qi
 contracts: []
 protocols:
+- eightballer/http:0.1.0:bafybeieoom2ajzvurwsjbivx23dwilarfzkihgqpgqp43ypowpr5xdyjr4
 - open_aea/signing:1.0.0:bafybeihv62fim3wl2bayavfcg3u5e5cxu3b7brtu4cn5xoxd6lqwachasi
 skills:
-- xiuxiuxar/chit_chat:0.1.0:bafybeibqk64cm2si4fitqkb6lxfroy5uuwl2kttgsfh2rkgkoavshoqg7y
+- xiuxiuxar/chit_chat:0.1.0:bafybeicq7yge5owxm26yxilgonnnrwryrdbiocxjk7vgwrchnvaco54gj4
 customs: []
 default_ledger: ethereum
 required_ledgers:
@@ -25,3 +27,10 @@ logging_config:
 dependencies:
   open-aea-ledger-ethereum: {}
 default_connection: null
+---
+public_id: xiuxiuxar/chit_chat:0.1.0:bafybeigf3xtuhu7ueqrcvpm4i7iudso3vydmolohyidmm2ic4vlctikeva
+type: skill
+models:
+  params:
+    args:
+      akash_api_key: ${AKASH_API_KEY:str:sk-i3kyCjV5kquUzfEbQCNgFg}

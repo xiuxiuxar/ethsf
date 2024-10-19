@@ -7,29 +7,30 @@ license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeicja5fynvgzcdxrez2igzbqfmeg73cyxsa4uqt2pmkwmejta64nbe
-  behaviours.py: bafybeie2vzbmrjxhqolvhsxegxdbqvnz65dk5jnuot7ccyhkcje5uiayti
-  handlers.py: bafybeigcixzs3efhwzknsuto2vyuhrlxxiibup2yibbtxipkxx4z3pu5pa
-  my_model.py: bafybeifo65bmyzsicbo37v7zhilksubitsqfsc5l2adgldgbao6ivcgsrq
+  behaviours.py: bafybeifeugsohzgpor3whserdxtlolxgi6pkh3ai3lftofxduurvn6gujq
+  data_models.py: bafybeighw4a3pniyb4by2keo357ry2cli4qaxd6bvuzdisy3pw35vmqcqe
+  handlers.py: bafybeicwwqihftpsd2tzvjosys4icrxd4pregijmlkbitknjcgdcyxl2oy
+  my_model.py: bafybeidymxzhqs3eaqb4lasgqe7vqliyrhztgdvk6t7aqwmxwv7na23tga
 fingerprint_ignore_patterns: []
 connections: []
 contracts: []
-protocols: []
+protocols:
+- eightballer/http:0.1.0:bafybeieoom2ajzvurwsjbivx23dwilarfzkihgqpgqp43ypowpr5xdyjr4
 skills: []
 behaviours:
   scaffold:
     args:
-      foo: bar
+      tick_interval: 10
     class_name: MyScaffoldBehaviour
 handlers:
   scaffold:
-    args:
-      foo: bar
+    args: {}
     class_name: MyScaffoldHandler
 models:
-  scaffold:
+  params:
     args:
-      foo: bar
-    class_name: MyModel
+      akash_api_key: null
+    class_name: Params
 dependencies: {}
 is_abstract: false
 customs: []

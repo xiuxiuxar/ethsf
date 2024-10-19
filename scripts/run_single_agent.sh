@@ -1,22 +1,22 @@
 set -e 
 
-if test -d chit_chat; then
-    echo "Removing previous agent build"
-    rm -rf chit_chat
+# go to the new agent
+# n the format eightballer/automation_station, we need to split by / nad go into the second part
+agent_name=$(echo $1 | cut -d'/' -f2)
+agent_author=$(echo $1 | cut -d'/' -f1)
+
+echo "   Agent author: $agent_author"
+echo "   Agent name:   $agent_name"
+
+if [ -d "$agent_name" ]; then
+    echo "Removing existing directory: $agent_name"
+    rm -rf "$agent_name"
 fi
 
 # fetch the agent from the local package registry
 echo "Fetching agent $1 from the local package registry..."
 aea -s fetch $1 --local > /dev/null
 
-# go to the new agent
-# n the format eightballer/automation_station, we need to split by / nad go into the second part
-
-agent_name=$(echo $1 | cut -d'/' -f2)
-agent_author=$(echo $1 | cut -d'/' -f1)
-
-echo "   Agent author: $agent_author"
-echo "   Agent name:   $agent_name"
 
 cd $agent_name
 
@@ -38,29 +38,5 @@ else
     cp -r ../certs ./
 fi
 
-tries=0
-tm_started=false
-while [ $tries -lt 20 ]; do
-    tries=$((tries+1))
-    if curl localhost:8080/hard_reset > /dev/null 2>&1; then
-        echo "Tendermint node is ready."
-        tm_started=true
-        break
-    fi
-    echo "Tendermint node is not ready yet, waiting..."
-    sleep 1
-done
-
-if [ "$tm_started" = false ]; then
-    echo "Tendermint node did not start in time. Please verify that the docker tendermint node is running."
-    exit 1
-fi
-
-echo "Starting the agent..."
-
 # finally, run the agent
-if [ -z "$2" ]; then
-    aea -s run 
-else
-    aea -s -v DEBUG run
-fi
+aea -s run
