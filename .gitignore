@@ -14,3 +14,7 @@ keys.json
 
 agent/
 service/
+
+packages/eightballer
+packages/open_aea
+packages/valory
