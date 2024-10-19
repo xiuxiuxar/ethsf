@@ -1,4 +1,4 @@
-# chat_station
+# conversation_station
 
 
 
@@ -19,11 +19,11 @@
 
 ### Installation and Setup for Development
 
-If you're looking to contribute or develop with `chat_station`, get the source code and set up the environment:
+If you're looking to contribute or develop with `conversation_station`, get the source code and set up the environment:
 
 ```shell
-git clone https://github.com/xiuxiuxar/chat_station --recurse-submodules
-cd chat_station
+git clone https://github.com/xiuxiuxar/conversation_station --recurse-submodules
+cd conversation_station
 make install
 ```
 
