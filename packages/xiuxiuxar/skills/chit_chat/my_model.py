@@ -22,5 +22,8 @@
 from aea.skills.base import Model
 
 
-class MyModel(Model):
+class Params(Model):
     """This class scaffolds a model."""
+    def __init__(self, *args, **kwargs):
+        self.akash_api_key = kwargs.pop("akash_api_key")
+        super().__init__(*args, **kwargs)
