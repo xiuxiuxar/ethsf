@@ -1,0 +1,35 @@
+name: chit_chat
+author: xiuxiuxar
+version: 0.1.0
+type: skill
+description: The scaffold skill is a scaffold for your own skill implementation.
+license: Apache-2.0
+aea_version: '>=1.0.0, <2.0.0'
+fingerprint:
+  __init__.py: bafybeicja5fynvgzcdxrez2igzbqfmeg73cyxsa4uqt2pmkwmejta64nbe
+  behaviours.py: bafybeie2vzbmrjxhqolvhsxegxdbqvnz65dk5jnuot7ccyhkcje5uiayti
+  handlers.py: bafybeigcixzs3efhwzknsuto2vyuhrlxxiibup2yibbtxipkxx4z3pu5pa
+  my_model.py: bafybeifo65bmyzsicbo37v7zhilksubitsqfsc5l2adgldgbao6ivcgsrq
+fingerprint_ignore_patterns: []
+connections: []
+contracts: []
+protocols: []
+skills: []
+behaviours:
+  scaffold:
+    args:
+      foo: bar
+    class_name: MyScaffoldBehaviour
+handlers:
+  scaffold:
+    args:
+      foo: bar
+    class_name: MyScaffoldHandler
+models:
+  scaffold:
+    args:
+      foo: bar
+    class_name: MyModel
+dependencies: {}
+is_abstract: false
+customs: []

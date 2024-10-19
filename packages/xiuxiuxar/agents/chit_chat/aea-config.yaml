@@ -1,0 +1,27 @@
+agent_name: chit_chat
+author: xiuxiuxar
+version: 0.1.0
+license: Apache-2.0
+description: ''
+aea_version: '>=1.57.0, <2.0.0'
+fingerprint: {}
+fingerprint_ignore_patterns: []
+connections: []
+contracts: []
+protocols:
+- open_aea/signing:1.0.0:bafybeihv62fim3wl2bayavfcg3u5e5cxu3b7brtu4cn5xoxd6lqwachasi
+skills:
+- xiuxiuxar/chit_chat:0.1.0:bafybeibqk64cm2si4fitqkb6lxfroy5uuwl2kttgsfh2rkgkoavshoqg7y
+customs: []
+default_ledger: ethereum
+required_ledgers:
+- ethereum
+default_routing: {}
+connection_private_key_paths: {}
+private_key_paths: {}
+logging_config:
+  disable_existing_loggers: false
+  version: 1
+dependencies:
+  open-aea-ledger-ethereum: {}
+default_connection: null
