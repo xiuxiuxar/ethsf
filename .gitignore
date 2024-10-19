@@ -8,6 +8,7 @@
 .history
 .idea
 .mypy_cache
+node_modules
 
 *private_key*
 keys.json
