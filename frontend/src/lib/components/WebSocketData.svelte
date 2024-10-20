@@ -1,30 +1,35 @@
 <script>
 	// @ts-nocheck
 
-	import { onMount } from 'svelte';
-
-	export let AGENT_WS = 'http://localhost:5556';
+	import { onMount } from "svelte";
+	import { provider, signerAddress } from "ethers-svelte";
+	import { PUBLIC_USERKEY } from "$env/dynamic/public";
+	export let AGENT_WS = "http://localhost:8080";
 
 	let data = [];
 	let filteredData = [];
 	let isExpanded = false;
-	let filter = '';
+	let filter = "";
+	let inputMessage = "";
+	let ws;
 
 	onMount(() => {
-		const ws = new WebSocket(AGENT_WS);
+		console.log(USERKEY);
+		ws = new WebSocket(AGENT_WS);
 
 		ws.onopen = () => {
-			console.log('WebSocket connected');
+			console.log("WebSocket connected");
 		};
 
 		ws.onmessage = (message) => {
+			console.log(message);
 			const newItem = { text: message.data, expanded: isExpanded };
 			data = [newItem, ...data];
 			applyFilter();
 		};
 
 		ws.onclose = () => {
-			console.log('WebSocket disconnected');
+			console.log("WebSocket disconnected");
 		};
 
 		return () => {
@@ -32,15 +37,43 @@
 		};
 	});
 
+	function handleSubscribe() {
+		send({
+			type: "subscribe",
+			privateKey: PUBLIC_USERKEY,
+		});
+	}
+	function sendMessage() {
+		console.log("$signerAddress", $signerAddress);
+		send({
+			type: "send_message",
+			to: "0x2e8B7798B00221aF2A68a9b78F534b4C8558a4f9",
+			content: inputMessage,
+			from: $signerAddress,
+		});
+	}
+
+	function send(payload) {
+		if (ws && ws.readyState === WebSocket.OPEN) {
+			ws.send(JSON.stringify(payload));
+			console.log("Message sent: ", inputMessage);
+		} else {
+			console.error("WebSocket is not open. Cannot send message.");
+		}
+	}
+
 	function toggleExpand(index) {
 		filteredData = filteredData.map((item, i) =>
-			i === index ? { ...item, expanded: !item.expanded } : item
+			i === index ? { ...item, expanded: !item.expanded } : item,
 		);
 	}
 
 	function toggleExpandAll() {
 		isExpanded = !isExpanded;
-		filteredData = filteredData.map((item) => ({ ...item, expanded: isExpanded }));
+		filteredData = filteredData.map((item) => ({
+			...item,
+			expanded: isExpanded,
+		}));
 	}
 
 	function applyFilter() {
@@ -61,32 +94,30 @@
 	<div class="data-container">
 		<h2>WebSocket Data Stream</h2>
 		<div class="btn-group variant-filled mb-2">
-			<button class="expand-button" on:click={toggleExpandAll}
-				>{isExpanded ? 'Collapse All' : 'Expand All'}</button
-			>
-			<button on:click={() => setFilter('')}>All</button>
-			<button class:selected={filter === '[INFO]'} on:click={() => setFilter('[INFO]')}>INFO</button
-			>
-			<button class:selected={filter === '[ERROR]'} on:click={() => setFilter('[ERROR]')}
-				>ERROR</button
-			>
-			<button class:selected={filter === '[WARNING]'} on:click={() => setFilter('[WARNING]')}
-				>WARNING</button
+			<button class="expand-button" on:click={handleSubscribe}
+				>Subscribe</button
 			>
 		</div>
 		{#if filteredData.length > 0}
 			<ul>
 				{#each filteredData as { text, expanded }, index}
 					<li>
-						<div class="item-header" on:click={() => toggleExpand(index)}>
+						<div
+							class="item-header"
+							on:click={() => toggleExpand(index)}
+						>
 							{#if text.length > 150}
-								<span class="arrow">{expanded ? '▼' : '▶'}</span>
+								<span class="arrow"
+									>{expanded ? "▼" : "▶"}</span
+								>
 							{/if}
 							<span class="text">
 								{#if expanded}
 									<div class="expanded">{text}</div>
 								{:else}
-									{text.slice(0, 150)}{text.length > 150 ? '...' : ''}
+									{text.slice(0, 150)}{text.length > 150
+										? "..."
+										: ""}
 								{/if}
 							</span>
 						</div>
@@ -96,6 +127,12 @@
 		{:else}
 			<p>No data available</p>
 		{/if}
+		<input
+			type="text"
+			bind:value={inputMessage}
+			placeholder="Type a message..."
+		/>
+		<button on:click={sendMessage}>Send</button>
 	</div>
 </main>
 
@@ -103,7 +140,7 @@
 	:global(body) {
 		background-color: #0a0a0a;
 		color: #30e9ff;
-		font-family: 'Courier New', monospace;
+		font-family: "Courier New", monospace;
 	}
 
 	h2 {
@@ -115,7 +152,11 @@
 	}
 
 	.data-container {
-		background: linear-gradient(135deg, rgba(10, 10, 10, 0.9) 0%, rgba(20, 20, 20, 0.8) 100%);
+		background: linear-gradient(
+			135deg,
+			rgba(10, 10, 10, 0.9) 0%,
+			rgba(20, 20, 20, 0.8) 100%
+		);
 		border: 2px solid #30e9ff;
 		border-radius: 10px;
 		padding: 20px;
@@ -135,7 +176,7 @@
 		padding: 10px;
 		border-radius: 5px;
 		color: #00ff41;
-		font-family: 'Courier New', monospace;
+		font-family: "Courier New", monospace;
 		font-size: 14px;
 		transition: background 0.3s;
 		background: rgba(255, 0, 255, 0.1);
@@ -171,7 +212,7 @@
 		text-align: center;
 		color: #ff0000;
 		font-size: 18px;
-		font-family: 'Courier New', monospace;
+		font-family: "Courier New", monospace;
 	}
 	.expanded {
 		height: 100%;
@@ -197,7 +238,7 @@
 		border: none;
 		border-radius: 5px;
 		cursor: pointer;
-		font-family: 'Courier New', monospace;
+		font-family: "Courier New", monospace;
 		font-size: 12px;
 		transition: background-color 0.3s;
 	}
@@ -220,7 +261,7 @@
 		border: none;
 		border-radius: 5px;
 		cursor: pointer;
-		font-family: 'Courier New', monospace;
+		font-family: "Courier New", monospace;
 		font-size: 16px;
 		transition: background-color 0.3s;
 	}
@@ -228,5 +269,11 @@
 	.expand-button:hover {
 		background-color: #00ff41;
 		color: #0a0a0a;
+	}
+	input {
+		width: 80%;
+		padding: 10px;
+		margin-right: 10px;
+		background: black;
 	}
 </style>

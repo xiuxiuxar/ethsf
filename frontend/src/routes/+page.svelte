@@ -11,11 +11,10 @@
 	import ListInfoKeyValue from "../lib/components/ListInfoKeyValue.svelte";
 	import WalletConnectEther from "../lib/components/WalletConnectEther.svelte";
 
-	// rfq
-	import TableTabs from "../lib/modules/TableTabs.svelte";
+	import Chat from "../lib/modules/Chat.svelte";
 	import TableComponent from "../lib/components/TableComponent.svelte";
 	import FormComponent from "../lib/components/FormComponentDynamic.svelte";
-	import BestPrice from "../lib/components/BestPrice.svelte";
+	import Websocket from "../lib/components/WebSocketData.svelte";
 
 	import { itemsConfig } from "../lib/config/layoutConfig";
 
@@ -30,6 +29,8 @@
 		ListInfoKeyValue,
 		FormComponent,
 		WalletConnectEther,
+		Websocket,
+		Chat,
 	};
 
 	onMount(() => {

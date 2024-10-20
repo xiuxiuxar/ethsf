@@ -44,7 +44,7 @@
 		><AppBar>
 			<div class="flex items-center">
 				<svelte:component this={Logo} />
-				<h2>EDUCATION STATION</h2>
+				<h2>CONVERSATION STATION</h2>
 			</div></AppBar
 		></svelte:fragment
 	>

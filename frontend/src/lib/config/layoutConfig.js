@@ -3,8 +3,8 @@ export const itemsConfig = [
         coordinates: {
             x: 0.1,
             y: 0.5,
-            w: 2.9,
-            h: 2.5
+            w: 5.6,
+            h: 3
         },
         com: 'ListInfoKeyValue',
         fixed: true,
@@ -24,26 +24,26 @@ export const itemsConfig = [
     },
     // {
     //     coordinates: {
-    //         x: 3,
-    //         y: 1,
-    //         w: 2.9,
-    //         h: 1.8
+    //         x: 0.1,
+    //         y: 6,
+    //         w: 5.5,
+    //         h: 1.5
     //     },
-    //     com: 'FormComponent',
+    //     com: 'Chat',
     //     fixed: true,
-    //     canRemove: true
+    //     canRemove: false
     // },
-    // {
-    //     coordinates: {
-    //         x: 3,
-    //         y: 3,
-    //         w: 2.9,
-    //         h: 1.7
-    //     },
-    //     com: 'BestPrice',
-    //     fixed: true,
-    //     canRemove: true
-    // },
+    {
+        coordinates: {
+            x: 0.1,
+            y: 3.5,
+            w: 5.6,
+            h: 1.8
+        },
+        com: 'Websocket',
+        fixed: true,
+        canRemove: false
+    },
     // {
     //     coordinates: {
     //         x: 0,
