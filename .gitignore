@@ -19,3 +19,5 @@ service/
 packages/eightballer
 packages/open_aea
 packages/valory
+
+node_modules
