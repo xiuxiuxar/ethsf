@@ -1,0 +1,55 @@
+agent_name: chit_chat
+author: xiuxiuxar
+version: 0.1.0
+license: Apache-2.0
+description: ''
+aea_version: '>=1.57.0, <2.0.0'
+fingerprint: {}
+fingerprint_ignore_patterns: []
+connections:
+- eightballer/http_client:0.1.0:bafybeidxqvcgobltkb5rgokakcfo25ntfhlffmpzqap6oid4ttmwbvn4qi
+contracts: []
+protocols:
+- eightballer/http:0.1.0:bafybeieoom2ajzvurwsjbivx23dwilarfzkihgqpgqp43ypowpr5xdyjr4
+- open_aea/signing:1.0.0:bafybeihv62fim3wl2bayavfcg3u5e5cxu3b7brtu4cn5xoxd6lqwachasi
+skills:
+- xiuxiuxar/chit_chat:0.1.0:bafybeidsernlbwpb25ianctqjszccosnyzqsdqorczdcydg4yi2qscb4bm
+customs: []
+default_ledger: ethereum
+required_ledgers:
+- ethereum
+default_routing: {}
+connection_private_key_paths: {}
+private_key_paths: {}
+logging_config:
+  disable_existing_loggers: true
+  formatters:
+    standard:
+      format: '%(asctime)s [%(levelname)s] %(name)s: %(message)s'
+  handlers:
+    console:
+      class: rich.logging.RichHandler
+      level: INFO
+    logfile:
+      class: logging.FileHandler
+      filename: log.txt
+      formatter: standard
+      level: INFO
+  loggers:
+    aea:
+      handlers:
+      - console
+      - logfile
+      level: INFO
+      propagate: false
+  version: 1
+dependencies:
+  open-aea-ledger-ethereum: {}
+default_connection: null
+---
+public_id: xiuxiuxar/chit_chat:0.1.0:bafybeigf3xtuhu7ueqrcvpm4i7iudso3vydmolohyidmm2ic4vlctikeva
+type: skill
+models:
+  params:
+    args:
+      akash_api_key: ${AKASH_API_KEY:str:sk-i3kyCjV5kquUzfEbQCNgFg}
