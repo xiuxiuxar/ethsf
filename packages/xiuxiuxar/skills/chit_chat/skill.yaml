@@ -2,15 +2,17 @@ name: chit_chat
 author: xiuxiuxar
 version: 0.1.0
 type: skill
-description: The scaffold skill is a scaffold for your own skill implementation.
+description: The chit chat skill enables users to engage in conversations with the
+  autonomous economic agent, allowing them to learn about its operations, configuration
+  details, and potential tuning capabilities to customize performance.
 license: Apache-2.0
 aea_version: '>=1.0.0, <2.0.0'
 fingerprint:
   __init__.py: bafybeicja5fynvgzcdxrez2igzbqfmeg73cyxsa4uqt2pmkwmejta64nbe
-  behaviours.py: bafybeifeugsohzgpor3whserdxtlolxgi6pkh3ai3lftofxduurvn6gujq
+  behaviours.py: bafybeihy3rcxfza7rpnkple42sx7hybbo464jnwp27lqrkv5pagfdsodcm
   data_models.py: bafybeighw4a3pniyb4by2keo357ry2cli4qaxd6bvuzdisy3pw35vmqcqe
-  handlers.py: bafybeicwwqihftpsd2tzvjosys4icrxd4pregijmlkbitknjcgdcyxl2oy
-  my_model.py: bafybeidymxzhqs3eaqb4lasgqe7vqliyrhztgdvk6t7aqwmxwv7na23tga
+  handlers.py: bafybeif6lsusq45x7fmw5z4uceaguyuhk4btx6eagl625h3pnteuuz2wjy
+  models.py: bafybeid7ohjg67lwph2bw5wx34otrqfhry3ewtapjcx5flo4rcqda5kkei
 fingerprint_ignore_patterns: []
 connections: []
 contracts: []
@@ -20,12 +22,12 @@ skills: []
 behaviours:
   scaffold:
     args:
-      tick_interval: 10
-    class_name: MyScaffoldBehaviour
+      tick_interval: 5
+    class_name: ChitChatBehaviour
 handlers:
   scaffold:
     args: {}
-    class_name: MyScaffoldHandler
+    class_name: ChitChatHandler
 models:
   params:
     args:

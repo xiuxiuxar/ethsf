@@ -26,7 +26,8 @@ from aea.protocols.base import Message
 from aea.skills.base import Handler
 from packages.eightballer.protocols.http import HttpMessage
 
-class MyScaffoldHandler(Handler):
+
+class ChitChatHandler(Handler):
     """This class scaffolds a handler."""
 
     SUPPORTED_PROTOCOL = HttpMessage.protocol_id

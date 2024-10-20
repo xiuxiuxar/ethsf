@@ -17,9 +17,8 @@
 #
 # ------------------------------------------------------------------------------
 
-"""This package contains a scaffold of a behaviour."""
+"""This package contains a chat behaviour."""
 
-import os
 import openai
 from itertools import cycle
 
@@ -31,17 +30,8 @@ from packages.xiuxiuxar.skills.chit_chat.data_models import (
 )
 
 
-# def get_api_key():
-#     api_key = os.environ.get("API_KEY")
-#     if api_key is None:
-#         raise EnvironmentError("API_KEY for Akash chat bot not set")
-#     return api_key
-
-
 MODEL = "Meta-Llama-3-1-405B-Instruct-FP8"
 BASE_URL = "https://chatapi.akash.network/api/v1"
-
-
 EXAMPLES = cycle([
     "What tasks can you perform as an Autonomous Economic Agent? Can you provide examples of how you might assist me?",
     "Can you explain how you interact with smart contracts on the blockchain? What tasks do you perform using them?",
@@ -83,8 +73,8 @@ def answer(llm_client, user_prompt: str) -> str:
     return llm_response.choices[0].message.content
 
 
-class MyScaffoldBehaviour(TickerBehaviour):
-    """This class scaffolds a behaviour."""
+class ChitChatBehaviour(TickerBehaviour):
+    """ChitChatBehaviour."""
 
     def setup(self) -> None:
         """Implement the setup."""
