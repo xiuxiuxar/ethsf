@@ -1,13 +1,27 @@
 <script>
 	// @ts-nocheck
 
-	import { ethers } from 'ethers';
+	import { ethers } from "ethers";
+	import { CoinbaseWalletSDK } from "@coinbase/wallet-sdk";
+
+	const sdk = new CoinbaseWalletSDK({
+		appName: "Conversation Station",
+		appChainIds: [1],
+	});
+
 	export let web3Props;
 
 	async function connectWallet() {
-		if (window !== undefined && typeof window.ethereum != 'undefined') {
-			const provider = new ethers.BrowserProvider(window.ethereum);
-			await provider.send('eth_requestAccounts', []);
+		if (window !== undefined && typeof window.ethereum != "undefined") {
+			// Create provider
+			const provider = sdk.makeWeb3Provider({
+				options: "smartWalletOnly",
+			});
+			// Use provider
+			const addresses = provider.request({
+				method: "eth_requestAccounts",
+			});
+			console.log(addresses);
 			const signer = await provider.getSigner();
 			// const contract =  new ethers.Contract(contractAdd,Abi.abi,signer)
 			//Uncomment above if you are using contract or making a dapp

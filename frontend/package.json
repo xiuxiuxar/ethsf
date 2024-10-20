@@ -43,6 +43,7 @@
   "dependencies": {
     "-": "^0.0.1",
     "@14islands/r3f-scroll-rig": "^8.13.1",
+    "@coinbase/wallet-sdk": "^4.1.0",
     "@floating-ui/dom": "1.6.3",
     "@rollup/plugin-alias": "^5.1.0",
     "@rollup/plugin-replace": "^5.0.7",
