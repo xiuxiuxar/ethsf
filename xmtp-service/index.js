@@ -52,9 +52,8 @@ wss.on('connection', async (ws) => {
                     // Open a conversation with the recipient
                     const conversation = await senderData.xmtpClient.conversations.newConversation(toAddress);
                     const message = await conversation.send(content);
-                    console.log("SENDING")
                     // console.dir(message, { depth: 1 });
-                    console.log(`Message sent from ${fromAddress} to ${toAddress}: ${message.content}`);
+                    console.log(`Sending message from ${fromAddress} to ${toAddress}: ${message.content}`);
                 } catch (error) {
                     console.error('Error sending message:', error);
                     ws.send(JSON.stringify({ status: 'error', message: 'Failed to send message.' }));
@@ -100,13 +99,13 @@ async function listenForMessages(publicAddress) {
                     continue;
                 }
 
-                console.log("RECEIVING")
                 // console.dir(message, { depth: 1 });
                 console.log(`Received message from ${sender} for ${recipient}: ${message.content}`);
-
+                const { ws, xmtpClient } = connectedClients[recipient]
                 if (ws && ws.readyState === WebSocket.OPEN) {
                     ws.send(JSON.stringify({
                         from: sender,
+                        to: recipient,
                         content: message.content,
                     }));
                 } else {
@@ -120,7 +119,6 @@ async function listenForMessages(publicAddress) {
         console.error(`No client registered with publicAddress: ${publicAddress}`);
     }
 }
-
 
 // Call this function to listen for messages once an agent has subscribed
 setInterval(() => {

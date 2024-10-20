@@ -25,22 +25,27 @@ async def subscribe_agent():
         data = {"type": "subscribe", "privateKey": agent_pk}
         await websocket.send(json.dumps(data))
 
+        response = await websocket.recv()
+        print(f"Agent subscription response: {response}")
+
         agent_address = derive_public_address(agent_pk)
+
         while True:
             message = await websocket.recv()
             message_data = json.loads(message)
             print(f"Agent received: {message_data}")
 
             # Echo back the received message to the user
-            if 'content' in message_data:
+            if (content := message_data.get("content")):
                 echo_data = {
                     "type": "send_message",
-                    "to": message_data['from'],
+                    "to": message_data["from"],
                     "from": agent_address,
-                    "content": message_data['content'],
+                    "content": f"Echo: {content}",
                 }
                 await websocket.send(json.dumps(echo_data))
                 print(f"Agent echoed: {message_data['content']}")
+                await asyncio.sleep(2)
 
 
 async def subscribe_user():
@@ -51,6 +56,9 @@ async def subscribe_user():
 
         data = {"type": "subscribe", "privateKey": user_pk}
         await websocket.send(json.dumps(data))
+
+        response = await websocket.recv()
+        print(f"User subscription response: {response}")
 
         user_address = derive_public_address(user_pk)
 
@@ -66,7 +74,7 @@ async def subscribe_user():
                 }
                 await websocket.send(json.dumps(message_data))
                 print("User sent: Hello")
-                time.sleep(5)
+                await asyncio.sleep(5)
 
         # Start the send_hello task
         asyncio.create_task(send_hello())
@@ -75,6 +83,7 @@ async def subscribe_user():
             message = await websocket.recv()
             message_data = json.loads(message)
             print(f"User received: {message_data}")
+            await asyncio.sleep(2)
 
 
 async def main():
