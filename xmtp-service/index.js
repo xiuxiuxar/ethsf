@@ -86,7 +86,7 @@ wss.on('connection', async (ws) => {
 async function listenForMessages(publicAddress) {
     const clientData = connectedClients[publicAddress];
     if (clientData && clientData.xmtpClient) {
-        const { ws, xmtpClient } = clientData;
+        const { ws: senderWs, xmtpClient } = clientData;
 
         try {
             // Listen for all new messages across all conversations
@@ -99,17 +99,30 @@ async function listenForMessages(publicAddress) {
                     continue;
                 }
 
-                // console.dir(message, { depth: 1 });
                 console.log(`Received message from ${sender} for ${recipient}: ${message.content}`);
-                const { ws, xmtpClient } = connectedClients[recipient]
-                if (ws && ws.readyState === WebSocket.OPEN) {
-                    ws.send(JSON.stringify({
+
+                // Guard clause for missing recipient, return to sender
+                if (!(recipient in connectedClients)) {
+                    console.error(`Error: Recipient ${recipient} not found in connectedClients.`);
+                    senderWs.send(JSON.stringify({
+                        error: `Recipient ${recipient} is not in connected clients.`,
+                    }));
+                    return;
+                }
+
+                // Forward message to recipient
+                const { ws: recipientWs, xmtpClient } = connectedClients[recipient]
+                if (recipientWs.readyState === WebSocket.OPEN) {
+                    recipientWs.send(JSON.stringify({
                         from: sender,
                         to: recipient,
                         content: message.content,
                     }));
                 } else {
-                    console.log(`WebSocket not open for recipient: ${recipient}`);
+                    console.error(`WebSocket not open for recipient: ${recipient}`);
+                    senderWs.send(JSON.stringify({
+                        error: `Recipient ${recipient} websocket connection not open.`,
+                    }));
                 }
             }
         } catch (error) {
