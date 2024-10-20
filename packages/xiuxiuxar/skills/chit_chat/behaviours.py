@@ -63,6 +63,11 @@ def get_repo_root() -> Path:
 load_dotenv(get_repo_root() / ".env")
 
 
+def derive_public_address(private_key):
+    account = Account.from_key(private_key)
+    return account.address
+
+
 def answer(llm_client, user_prompt: str, context_data: str) -> str:
 
     max_tokens = 300
@@ -140,21 +145,54 @@ class ChitChatBehaviour(TickerBehaviour):
             # subscribe agent to XMTP server
             uri = "ws://localhost:8080"
             agent_pk = os.environ.get("AGENT_PK")
+            self.agent_address = derive_public_address(agent_pk)
             assert agent_pk is not None
             asyncio.create_task(self.subscribe_agent(uri, agent_pk))
 
     async def subscribe_agent(self, uri: str, agent_pk: str):
         await asyncio.sleep(1)
         self.context.logger.info(f"Executing subscribe_agent")
-        async with websockets.connect(uri) as websocket:
-            data = {"type": "subscribe", "privateKey": agent_pk}
-            await websocket.send(json.dumps(data))
-            response = await websocket.recv()
-            self.context.logger.info(f"Agent subscription response: {response}")
+        try:
+            async with websockets.connect(uri) as websocket:
+                data = {"type": "subscribe", "privateKey": agent_pk}
+                await websocket.send(json.dumps(data))
+                response = await websocket.recv()
+                self.context.logger.info(f"Agent subscription response: {response}")
+                await self.handler_requests(websocket)
+        except websockets.exceptions.InvalidURI as e:
+            self.context.logger.error(f"Invalid WebSocket URI: {e}")
+        except websockets.exceptions.ConnectionClosed as e:
+            self.context.logger.error(f"WebSocket connection closed unexpectedly: {e}")
+        except Exception as e:
+            self.context.logger.error(f"Error during agent subscription: {e}")
+
+    async def handler_requests(self, websocket):
+        """Handle incoming WebSocket messages and respond accordingly."""
+
+        try:
+            while True:
+                message = await websocket.recv()
+                message_data = json.loads(message)
+                self.context.logger.info(f"Agent received: {message_data}")
+
+                if (content := message_data.get("content")):
+                    echo_data = {
+                        "type": "send_message",
+                        "to": message_data["from"],
+                        "from": self.agent_address,
+                        "content": f"Echo: {content}",
+                    }
+                    await websocket.send(json.dumps(echo_data))
+                    self.context.logger.info(f"Agent echoed: {message_data['content']}")
+                await asyncio.sleep(1)
+        except websockets.exceptions.ConnectionClosed as e:
+            self.context.logger.error(f"WebSocket connection closed unexpectedly: {e}")
+        except Exception as e:
+            self.context.logger.error(f"Error in handling requests: {e}")
 
     def check_server_health(self) -> None:
         """Check if XMTP server is running and restart if necessary."""
-        if self.xmtp_server_process.poll() is not None:
+        if self.xmtp_server_process is None or self.xmtp_server_process.poll() is not None:
             self.context.logger.warning("XMTP server down. Restarting...")
             self.start_xmtp_server()
 
