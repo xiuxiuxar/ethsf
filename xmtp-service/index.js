@@ -15,7 +15,7 @@ async function connectToXMTP(privateKey) {
     const wallet = new ethers.Wallet(privateKey).connect(provider);
     const publicAddress = wallet.address;
     const xmtpClient = await Client.create(wallet);
-    console.log('Agent connected to XMTP');
+    console.log(`${publicAddress} connected to XMTP`);
     return { xmtpClient, publicAddress };
 }
 
@@ -112,7 +112,7 @@ async function listenForMessages(publicAddress) {
                     continue;
                 }
 
-                console.log(`Received message from ${sender} for ${recipient}: ${message.content}`);
+                // console.log(`Received message from ${sender} for ${recipient}: ${message.content}`);
 
                 // Guard clause for missing recipient, return to sender
                 if (!(recipient in connectedClients)) {

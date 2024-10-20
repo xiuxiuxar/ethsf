@@ -13,7 +13,7 @@ protocols:
 - eightballer/http:0.1.0:bafybeieoom2ajzvurwsjbivx23dwilarfzkihgqpgqp43ypowpr5xdyjr4
 - open_aea/signing:1.0.0:bafybeihv62fim3wl2bayavfcg3u5e5cxu3b7brtu4cn5xoxd6lqwachasi
 skills:
-- xiuxiuxar/chit_chat:0.1.0:bafybeidsernlbwpb25ianctqjszccosnyzqsdqorczdcydg4yi2qscb4bm
+- xiuxiuxar/chit_chat:0.1.0:bafybeicrtnaaxug27edgi2lbci7madrrbkoqhiy4ljtoibkpeupukdkq2y
 customs: []
 default_ledger: ethereum
 required_ledgers:
