@@ -40,44 +40,91 @@ wss.on('connection', async (ws) => {
             }
         }
 
-        // Other message handling logic can be placed here
+        // Handle sending a message
+        else if (msgData.type === 'send_message') {
+            const toAddress = msgData.to;
+            const fromAddress = msgData.from;
+            const content = msgData.content;
+            const senderData = connectedClients[fromAddress];
+
+            if (senderData && senderData.xmtpClient) {
+                try {
+                    // Open a conversation with the recipient
+                    const conversation = await senderData.xmtpClient.conversations.newConversation(toAddress);
+                    const message = await conversation.send(content);
+                    console.log("SENDING")
+                    // console.dir(message, { depth: 1 });
+                    console.log(`Message sent from ${fromAddress} to ${toAddress}: ${message.content}`);
+                } catch (error) {
+                    console.error('Error sending message:', error);
+                    ws.send(JSON.stringify({ status: 'error', message: 'Failed to send message.' }));
+                }
+            } else {
+                ws.send(JSON.stringify({ status: 'error', message: 'Client not registered.' }));
+            }
+        }
+
+        else {
+            console.error('Invalid message type:', msgData);
+        }
     });
 
     // Handle WebSocket closing
     ws.on('close', () => {
         console.log('Client disconnected from WebSocket');
-        // Optionally, clean up the connectedClients object
+        // Clean up connectedClients object
+        for (const [address, clientData] of Object.entries(connectedClients)) {
+            if (clientData.ws === ws) {
+                delete connectedClients[address];
+                console.log(`Removed ${address} from connected clients`);
+                break;
+            }
+        }
     });
 });
 
 // Listen for incoming XMTP messages and broadcast them to WebSocket clients
-async function listenForMessages(agentId) {
-    const clientData = connectedClients[agentId];
+async function listenForMessages(publicAddress) {
+    const clientData = connectedClients[publicAddress];
     if (clientData && clientData.xmtpClient) {
         const { ws, xmtpClient } = clientData;
 
         try {
             // Listen for all new messages across all conversations
             for await (const message of await xmtpClient.conversations.streamAllMessages()) {
-                console.log(`Received message from ${message.senderAddress}: ${message.content}`);
+                const sender = message.senderAddress;  // === publicAddress
+                const recipient = message.conversation.peerAddress
 
-                // Send message over WebSocket to the registered client
-                if (ws.readyState === WebSocket.OPEN) {
-                    ws.send(JSON.stringify({ from: message.senderAddress, content: message.content }));
+                if (sender === recipient) {
+                    // This message was sent from me
+                    continue;
+                }
+
+                console.log("RECEIVING")
+                // console.dir(message, { depth: 1 });
+                console.log(`Received message from ${sender} for ${recipient}: ${message.content}`);
+
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify({
+                        from: sender,
+                        content: message.content,
+                    }));
+                } else {
+                    console.log(`WebSocket not open for recipient: ${recipient}`);
                 }
             }
         } catch (error) {
             console.error('Error listening for messages:', error);
         }
     } else {
-        console.error(`No client registered with agentId: ${agentId}`);
+        console.error(`No client registered with publicAddress: ${publicAddress}`);
     }
 }
 
 
 // Call this function to listen for messages once an agent has subscribed
 setInterval(() => {
-    Object.keys(connectedClients).forEach(agentId => {
-        listenForMessages(agentId);
+    Object.keys(connectedClients).forEach(publicAddress => {
+        listenForMessages(publicAddress);
     });
 }, 5000);
