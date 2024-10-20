@@ -35,9 +35,16 @@ make install
 
 ## Running the agent
 
-
 ```bash
 ./scripts/run_single_agent.sh xiuxiuxar/chit_chat
+```
+
+The XMTP server runs on localhost:8080, which is where requests end up when sent via the frontend.
+
+Alternatively, one can instantiate a dummy user after spinning up the agent.
+
+```bash
+python ./scripts/user.py
 ```
 
 ## License
