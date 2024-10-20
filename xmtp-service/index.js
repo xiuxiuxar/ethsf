@@ -7,6 +7,7 @@ const WebSocket = require('ws');
 // WebSocket Server Setup
 const wss = new WebSocket.Server({ port: 8080 });
 let connectedClients = {};
+const conversationsMap = {};
 
 // Connect to XMTP
 async function connectToXMTP(privateKey) {
@@ -49,10 +50,22 @@ wss.on('connection', async (ws) => {
 
             if (senderData && senderData.xmtpClient) {
                 try {
-                    // Open a conversation with the recipient
-                    const conversation = await senderData.xmtpClient.conversations.newConversation(toAddress);
+                    // Check if a conversation already exists
+                    let conversation;
+                    if (conversationsMap[fromAddress] && conversationsMap[fromAddress][toAddress]) {
+                        conversation = conversationsMap[fromAddress][toAddress];
+                    } else {
+                        // Open a new conversation
+                        conversation = await senderData.xmtpClient.conversations.newConversation(toAddress);
+                        if (!conversationsMap[fromAddress]) {
+                            conversationsMap[fromAddress] = {};
+                        }
+                        conversationsMap[fromAddress][toAddress] = conversation;
+                        console.log(`New conversation started between ${fromAddress} and ${conversation.peerAddress}`)
+                    }
+
+                    // Send the message through the conversation
                     const message = await conversation.send(content);
-                    // console.dir(message, { depth: 1 });
                     console.log(`Sending message from ${fromAddress} to ${toAddress}: ${message.content}`);
                 } catch (error) {
                     console.error('Error sending message:', error);
