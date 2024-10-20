@@ -15,7 +15,7 @@ async function connectToXMTP(privateKey) {
     const wallet = new ethers.Wallet(privateKey).connect(provider);
     const publicAddress = wallet.address;
     const xmtpClient = await Client.create(wallet);
-    console.log('Agent connected to XMTP');
+    console.log(`${publicAddress} connected to XMTP`);
     return { xmtpClient, publicAddress };
 }
 
