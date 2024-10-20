@@ -200,6 +200,7 @@ class ChitChatBehaviour(TickerBehaviour):
         }
 
         context_str = "\n".join(f"{k}: {v}" for k, v in context_data.items())
+        return context_str
 
     async def handler_requests(self, websocket):
         """Handle incoming WebSocket messages and respond accordingly."""
@@ -226,7 +227,7 @@ class ChitChatBehaviour(TickerBehaviour):
                     }
                     await websocket.send(json.dumps(echo_data))
                     self.context.logger.info(f"Agent echoed: {message_data['content']}")
-                await asyncio.sleep(1)
+                await asyncio.sleep(10)
         except websockets.exceptions.ConnectionClosed as e:
             self.context.logger.error(f"WebSocket connection closed unexpectedly: {e}")
         except Exception as e:
