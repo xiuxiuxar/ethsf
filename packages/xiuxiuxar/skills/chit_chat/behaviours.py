@@ -19,12 +19,18 @@
 
 """This package contains a chat behaviour."""
 
+import os
+import asyncio
 import openai
 import json
 from pathlib import Path
 from itertools import cycle
 from typing import cast
 import subprocess
+import websockets
+from dotenv import load_dotenv
+from eth_account import Account
+
 from aea.skills.behaviours import Behaviour, TickerBehaviour
 
 from packages.xiuxiuxar.skills.chit_chat.data_models import (
@@ -51,6 +57,10 @@ def get_repo_root() -> Path:
     command = ['git', 'rev-parse', '--show-toplevel']
     repo_root = subprocess.check_output(command, stderr=subprocess.STDOUT).strip()
     return Path(repo_root.decode('utf-8'))
+
+
+# Load environment variables from .env file
+load_dotenv(get_repo_root() / ".env")
 
 
 def answer(llm_client, user_prompt: str, context_data: str) -> str:
@@ -127,6 +137,20 @@ class ChitChatBehaviour(TickerBehaviour):
             command = ["node", "index.js"]
             self.xmtp_server_process = subprocess.Popen(command, cwd=self.xmtp_service_dir)
             self.context.logger.info("XMTP server started on port 8080.")
+            # subscribe agent to XMTP server
+            uri = "ws://localhost:8080"
+            agent_pk = os.environ.get("AGENT_PK")
+            assert agent_pk is not None
+            asyncio.create_task(self.subscribe_agent(uri, agent_pk))
+
+    async def subscribe_agent(self, uri: str, agent_pk: str):
+        await asyncio.sleep(1)
+        self.context.logger.info(f"Executing subscribe_agent")
+        async with websockets.connect(uri) as websocket:
+            data = {"type": "subscribe", "privateKey": agent_pk}
+            await websocket.send(json.dumps(data))
+            response = await websocket.recv()
+            self.context.logger.info(f"Agent subscription response: {response}")
 
     def check_server_health(self) -> None:
         """Check if XMTP server is running and restart if necessary."""
@@ -202,4 +226,8 @@ class ChitChatBehaviour(TickerBehaviour):
         self.context.params.tick_interval = new_interval
 
     def teardown(self) -> None:
-        """Implement the task teardown."""
+        """Clean up and terminate the XMTP server when the agent stops."""
+        if self.xmtp_server_process and self.xmtp_server_process.poll() is None:
+            self.context.logger.info("Terminating XMTP server on port 8080.")
+            self.xmtp_server_process.terminate()
+            self.xmtp_server_process.wait()  # Ensure the process is fully terminated
