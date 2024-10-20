@@ -116,6 +116,18 @@ def answer(llm_client, user_prompt: str, context_data: str) -> str:
     return llm_response.choices[0].message.content
 
 
+def safe_repr(key, value):
+    sensitive_keys = ['key', 'token', 'secret', 'password', 'api']
+    if isinstance(value, str) and (any(k in key.lower() for k in sensitive_keys) or 
+                                    any(k in value.lower() for k in sensitive_keys)):
+        return '[REDACTED]'
+    elif isinstance(value, dict):
+        return {k: safe_repr(k, v) for k, v in value.items()}
+    elif isinstance(value, list):
+        return [safe_repr(str(i), v) for i, v in enumerate(value)]
+    return repr(value)
+
+
 class ChitChatBehaviour(TickerBehaviour):
     """ChitChatBehaviour."""
 
@@ -166,55 +178,7 @@ class ChitChatBehaviour(TickerBehaviour):
         except Exception as e:
             self.context.logger.error(f"Error during agent subscription: {e}")
 
-    async def handler_requests(self, websocket):
-        """Handle incoming WebSocket messages and respond accordingly."""
-
-        try:
-            while True:
-                message = await websocket.recv()
-                message_data = json.loads(message)
-                self.context.logger.info(f"Agent received: {message_data}")
-
-                if (content := message_data.get("content")):
-                    echo_data = {
-                        "type": "send_message",
-                        "to": message_data["from"],
-                        "from": self.agent_address,
-                        "content": f"Echo: {content}",
-                    }
-                    await websocket.send(json.dumps(echo_data))
-                    self.context.logger.info(f"Agent echoed: {message_data['content']}")
-                await asyncio.sleep(1)
-        except websockets.exceptions.ConnectionClosed as e:
-            self.context.logger.error(f"WebSocket connection closed unexpectedly: {e}")
-        except Exception as e:
-            self.context.logger.error(f"Error in handling requests: {e}")
-
-    def check_server_health(self) -> None:
-        """Check if XMTP server is running and restart if necessary."""
-        if self.xmtp_server_process is None or self.xmtp_server_process.poll() is not None:
-            self.context.logger.warning("XMTP server down. Restarting...")
-            self.start_xmtp_server()
-
-    def act(self) -> None:
-        """Implement the act."""
-
-        self.check_server_health()
-
-        logger = self.context.logger
-        user_prompt = next(EXAMPLES)
-
-        def safe_repr(key, value):
-            sensitive_keys = ['key', 'token', 'secret', 'password', 'api']
-            if isinstance(value, str) and (any(k in key.lower() for k in sensitive_keys) or 
-                                           any(k in value.lower() for k in sensitive_keys)):
-                return '[REDACTED]'
-            elif isinstance(value, dict):
-                return {k: safe_repr(k, v) for k, v in value.items()}
-            elif isinstance(value, list):
-                return [safe_repr(str(i), v) for i, v in enumerate(value)]
-            return repr(value)
-
+    def get_context_data(self):
         context_data = {
             "params": {
                 attr: safe_repr(attr, getattr(self.context.params, attr))
@@ -237,15 +201,47 @@ class ChitChatBehaviour(TickerBehaviour):
 
         context_str = "\n".join(f"{k}: {v}" for k, v in context_data.items())
 
-        llm_response = answer(self.llm_client, user_prompt, context_str)
+    async def handler_requests(self, websocket):
+        """Handle incoming WebSocket messages and respond accordingly."""
 
         try:
-            action_data = json.loads(llm_response)
-            self.execute_action(action_data)
-            logger.info(f"User: {user_prompt}\nAI: {action_data['response']}")
-            logger.info(f"Tick interval: {self.tick_interval}")
-        except json.JSONDecodeError:
-            logger.error(f"Failed to parse LLM response: {llm_response}")
+            while True:
+                message = await websocket.recv()
+                message_data = json.loads(message)
+                self.context.logger.info(f"Agent received: {message_data}")
+                user_prompt = message_data.get("content")
+                context_data = self.get_context_data()
+                llm_response = answer(self.llm_client, user_prompt, context_data=context_data)
+                action_data = json.loads(llm_response)
+                self.execute_action(action_data)
+                self.context.logger.info(f"User: {user_prompt}\nAI: {action_data['response']}")
+                self.context.logger.info(f"Tick interval: {self.tick_interval}")
+
+                if ():
+                    echo_data = {
+                        "type": "send_message",
+                        "to": message_data["from"],
+                        "from": self.agent_address,
+                        "content": action_data['response'],
+                    }
+                    await websocket.send(json.dumps(echo_data))
+                    self.context.logger.info(f"Agent echoed: {message_data['content']}")
+                await asyncio.sleep(1)
+        except websockets.exceptions.ConnectionClosed as e:
+            self.context.logger.error(f"WebSocket connection closed unexpectedly: {e}")
+        except Exception as e:
+            self.context.logger.error(f"Error in handling requests: {e}")
+
+    def check_server_health(self) -> None:
+        """Check if XMTP server is running and restart if necessary."""
+        if self.xmtp_server_process is None or self.xmtp_server_process.poll() is not None:
+            self.context.logger.warning("XMTP server down. Restarting...")
+            self.start_xmtp_server()
+
+    def act(self) -> None:
+        """Implement the act."""
+
+        self.check_server_health()
         
     def execute_action(self, action_data):
         action = action_data.get('action', 'none')
