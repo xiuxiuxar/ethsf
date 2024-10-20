@@ -112,7 +112,7 @@ async function listenForMessages(publicAddress) {
                     continue;
                 }
 
-                console.log(`Received message from ${sender} for ${recipient}: ${message.content}`);
+                // console.log(`Received message from ${sender} for ${recipient}: ${message.content}`);
 
                 // Guard clause for missing recipient, return to sender
                 if (!(recipient in connectedClients)) {
