@@ -3,7 +3,6 @@
 
 	import { onMount } from "svelte";
 	import { provider, signerAddress } from "ethers-svelte";
-	import { PUBLIC_USERKEY } from "$env/dynamic/public";
 	export let AGENT_WS = "http://localhost:8080";
 
 	let data = [];
@@ -14,7 +13,6 @@
 	let ws;
 
 	onMount(() => {
-		console.log(USERKEY);
 		ws = new WebSocket(AGENT_WS);
 
 		ws.onopen = () => {
@@ -40,7 +38,7 @@
 	function handleSubscribe() {
 		send({
 			type: "subscribe",
-			privateKey: PUBLIC_USERKEY,
+			privateKey: import.meta.env.VITE_USERKEY,
 		});
 	}
 	function sendMessage() {
